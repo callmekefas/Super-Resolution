@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Super Resolution App</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #eef2f7;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align content to the top */
+            min-height: 100vh; /* Ensure full viewport height */
+            box-sizing: border-box;
+        }
+
+        /* Container for the whole application */
+        .container {
+            max-width: 900px; /* Lebarkan container untuk 2 gambar */
+            width: 100%;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+        }
+
+        /* Main Heading */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+            font-weight: 600;
+        }
+
+        /* Form Styling */
+        form {
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 25px;
+            border: 2px dashed #a7d9ff;
+            border-radius: 10px;
+            background-color: #f7faff;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Custom File Upload Button */
+        input[type="file"] {
+            display: none; /* Hide original file input */
+        }
+
+        .custom-file-upload {
+            border: 1px solid #007bff;
+            display: inline-block;
+            padding: 12px 25px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+        .custom-file-upload:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        #file-name {
+            font-size: 0.95em;
+            color: #555;
+            flex-grow: 1;
+            text-align: left;
+            margin-left: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
+
+        /* Submit Button */
+        input[type="submit"] {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Image Display Area */
+        .image-display {
+            display: flex;
+            justify-content: space-around; /* Mengatur spasi di sekitar 2 gambar */
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        /* Individual Image Box */
+        .image-box {
+            text-align: center;
+            background-color: #fefefe;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            flex: 0 0 calc(50% - 25px); /* 2 kolom */
+            max-width: calc(50% - 25px);
+            min-width: 250px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Image Sizing within Image Box (Crucial for consistent display) */
+        .image-box img {
+            width: 256px;  /* **Memaksa lebar tampilan menjadi 256px** */
+            height: 256px; /* **Memaksa tinggi tampilan menjadi 256px** */
+            object-fit: contain; /* **Important: Scale down if larger, without cropping/distorting** */
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Image Box Title */
+        .image-box h2 {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 5px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        /* Image Dimensions Text */
+        .image-dimensions {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: auto;
+            padding-top: 5px;
+        }
+
+        /* Error Message Styling */
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 25px;
+            font-weight: bold;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) { /* Adjust for smaller screens like tablets */
+            .container {
+                padding: 20px;
+                max-width: 100%; /* Use full width on smaller screens */
+            }
+            .image-box {
+                flex: 0 0 calc(100% - 25px); /* 1 column on smaller screens */
+                max-width: calc(100% - 25px);
+            }
+            .image-box img {
+                width: 100%; /* Image fills box, scales proportionally */
+                height: auto; /* Height adjusts */
+                object-fit: contain;
+            }
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .custom-file-upload, input[type="submit"], #file-name {
+                width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+                text-align: center;
+            }
+            #file-name {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Super Resolution Gambar Anda</h1>
+
+        <form method="post" enctype="multipart/form-data" id="upload-form">
+            <label for="file-upload" class="custom-file-upload">
+                Pilih File
+            </label>
+            <input id="file-upload" type="file" name="file" accept=".png, .jpg, .jpeg">
+            <span id="file-name">Tidak ada file yang dipilih</span>
+            <input type="submit" value="Upload & Super Resolve">
+        </form>
+
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
+
+        {# HANYA TAMPILKAN 2 GAMBAR INI #}
+        {% if original_image and super_resolved_image and original_lr_dimensions and sr_dimensions %}
+        <div class="image-display">
+            <div class="image-box">
+                <h2>Gambar Asli (Input)</h2>
+                <img src="{{ original_image }}" alt="Original Image">
+                <p class="image-dimensions">{{ original_lr_dimensions }}</p>
+            </div>
+            <div class="image-box">
+                <h2>Hasil Super Resolution</h2>
+                <img src="{{ super_resolved_image }}" alt="Super Resolved Image">
+                <p class="image-dimensions">{{ sr_dimensions }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // JavaScript untuk menampilkan nama file yang dipilih
+        document.getElementById('file-upload').addEventListener('change', function() {
+            var fileName = this.files && this.files.length > 0 ? this.files[0].name : 'Tidak ada file yang dipilih';
+            document.getElementById('file-name').textContent = fileName;
+        });
+    </script>
+</body>
+</html>
